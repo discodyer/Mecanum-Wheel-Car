@@ -52,7 +52,7 @@ int main(void)
 
 	while (1)
 	{
-		c.move();
+		c.move(0,0,0);
 	}
 }
 

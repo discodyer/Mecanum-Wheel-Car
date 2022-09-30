@@ -16,12 +16,16 @@ car::~car()
 {
 }
 
-void car::move()
+/**
+ * @brief move car
+ * 
+ * @param x speed X
+ * @param y speed Y
+ * @param r speed rotation
+ */
+void car::move(uint16_t x, uint16_t y, uint16_t r)
 {
-    this->Straight();
-    HAL_Delay(1000);
-    this->TurnBack();
-    HAL_Delay(1000);
+    
 }
 
 void car::PWMOUT()

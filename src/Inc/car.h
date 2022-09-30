@@ -44,8 +44,8 @@ private:
 	void TurnBack();		// 180转
 
 public:
-	car(/* args */);
-	void move();
+	car();
+	void move(uint16_t x, uint16_t y, uint16_t r);
 	~car();
 };
 
