@@ -18,14 +18,29 @@ car::~car()
 
 /**
  * @brief move car
- * 
- * @param x speed X
- * @param y speed Y
- * @param r speed rotation
+ *
+ * @param x 表示 X 轴运动的速度，即左右方向，定义向右为正
+ * @param y 表示 Y 轴运动的速度，即前后方向，定义向前为正
+ * @param r 表示 yaw 轴自转的角速度，定义逆时针为正
  */
 void car::move(uint16_t x, uint16_t y, uint16_t r)
 {
-    
+    uint16_t w1, w2, w3, w4;
+    w1 = y - x + r; //右前轮
+    w2 = y + x - r; //左前轮
+    w3 = y - x - r; //左后轮
+    w4 = y + x + r; //右后轮
+
+    this->DutyR10 = 0; //右前轮前进
+    this->DutyR20 = 0; //右后轮前进
+    this->DutyL10 = 0; //左后轮前进
+    this->DutyL20 = 0; //左前轮前进
+    this->DutyR11 = 0; //右前轮后退
+    this->DutyR21 = 0; //右后轮后退
+    this->DutyL11 = 0; //左后轮后退
+    this->DutyL21 = 0; //左前轮后退
+
+    this->PWMOUT();
 }
 
 void car::PWMOUT()
@@ -54,8 +69,6 @@ void car::Stop()
     FlagIT = 1;
     HAL_TIM_Base_Stop_IT(&htim1);
 }
-
-
 
 void car::Straight() //直行
 {
@@ -164,4 +177,3 @@ void car::TurnBack() // 180转
     this->DutyL21 = 0;
     this->PWMOUT();
 }
-
