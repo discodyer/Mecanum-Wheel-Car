@@ -20,8 +20,6 @@
 #define USARTON HAL_GPIO_WritePin(USART_GPIO_Port, USART_Pin, GPIO_PIN_SET)
 #define USARTOFF HAL_GPIO_WritePin(USART_GPIO_Port, USART_Pin, GPIO_PIN_RESET)
 
-extern volatile uint16_t FlagIT;
-
 class car
 {
 private:

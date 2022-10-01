@@ -31,6 +31,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "stm32f1xx_it.h"//包含上面的东西，不然主函数用到*p_IsToReceive会报错。
 
 /* USER CODE END Includes */
 

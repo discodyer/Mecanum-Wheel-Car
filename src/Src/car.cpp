@@ -66,7 +66,6 @@ void car::Stop()
     this->DutyL11 = 1000;
     this->DutyL21 = 1000;
     this->PWMOUT();
-    FlagIT = 1;
     HAL_TIM_Base_Stop_IT(&htim1);
 }
 
