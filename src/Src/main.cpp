@@ -3,19 +3,12 @@
 #include "usart.h"
 #include "gpio.h"
 #include "car.h"
-
+#include "dma.h"
 #include "stdio.h"
 #include "string.h"
 
-volatile uint16_t FlagIT;
-uint16_t Step;
-uint16_t SSS = 0;
-uint8_t RxFlag = 0;
-volatile uint8_t num;
-uint8_t RxBuffer[1];
-
 void SystemClock_Config(void);
-int fputc(int ch, FILE *f);
+// int fputc(int ch, FILE *f);
 
 /**
  * @brief  The application entry point.
@@ -31,10 +24,25 @@ int main(void)
 	SystemClock_Config();
 
 	MX_GPIO_Init();
+	MX_DMA_Init();
+	MX_USART1_UART_Init();
+
+	// 开启串口1空闲中断
+	__HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
+
+	// 开启DMA发送通道的发送完成中断，才能实现封装发送函数里面的等待功能
+	__HAL_DMA_ENABLE_IT(&hdma_usart1_tx, DMA_IT_TC);
+
+	// 清除空闲标志位，防止中断误入
+	__HAL_UART_CLEAR_IDLEFLAG(&huart1);
+
+	// 立即就要打开DMA接收
+	// 不然DMA没有提前准备，第一次接收的数据是读取不出来的
+	HAL_UART_Receive_DMA(&huart1, p_IsToReceive, MAX_RX_LEN);
+
+	MX_TIM1_Init();
 	MX_TIM2_Init();
 	MX_TIM3_Init();
-	MX_USART1_UART_Init();
-	MX_TIM1_Init();
 
 	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
@@ -44,23 +52,21 @@ int main(void)
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
-	printf("USART READY!\n");
-	HAL_UART_Receive_IT(&huart1,RxBuffer,1);//开始串口转化
-	FlagIT = 0;
-	Step = 0;
+
+	my_printf("USART READY!\n");
+
 	car c;
 
 	while (1)
 	{
-		c.move(0,0,0);
 	}
 }
 
-int fputc(int ch, FILE *f) //重定义printf
-{
-    HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
-    return ch;
-}
+// int fputc(int ch, FILE *f) //重定义printf
+// {
+// 	HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+// 	return ch;
+// }
 
 /**
  * @brief System Clock Configuration
@@ -101,20 +107,20 @@ void SystemClock_Config(void)
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) //定时器1中断回调函数
 {
-    // if (htim == (&htim1))
-    // {
-    // 		if( R1 &&  R2 &&  M1 &&  L2 &&  L1)   Stop();			//全黑停车
-    // 		if(!R1 && !R2 && !M1 && !L2 && !L1)   Stop();			//全白停车
-    // 		if(!R1 && !R2 &&  M1 && !L2 && !L1)   Straight();	//中  	11011
-    // 		if(!R1 &&  R2 &&  M1 && !L2 && !L1)   Right(1);		//右1   10011
-    // 		if(!R1 &&  R2 && !M1 && !L2 && !L1)   Right(2);		//右2   10111
-    // 		if( R1 &&  R2 && !M1 && !L2 && !L1)	  Right(4);		//右3   00111
-    // 		if( R1 && !R2 && !M1 && !L2 && !L1)   Right(6);		//右3   01111
-    // 		if(!R1 && !R2 &&  M1 &&  L2 && !L1)   Left(1);		//左1   11001
-    // 		if(!R1 && !R2 && !M1 &&  L2 && !L1)   Left(2);		//左2   11101
-    // 		if(!R1 && !R2 && !M1 &&  L2 &&  L1)   Left(4);		//左3   11100
-    // 		if(!R1 && !R2 && !M1 && !L2 &&  L1)   Left(6);		//左3   11110
-    // }
+	// if (htim == (&htim1))
+	// {
+	// 		if( R1 &&  R2 &&  M1 &&  L2 &&  L1)   Stop();			//全黑停车
+	// 		if(!R1 && !R2 && !M1 && !L2 && !L1)   Stop();			//全白停车
+	// 		if(!R1 && !R2 &&  M1 && !L2 && !L1)   Straight();	//中  	11011
+	// 		if(!R1 &&  R2 &&  M1 && !L2 && !L1)   Right(1);		//右1   10011
+	// 		if(!R1 &&  R2 && !M1 && !L2 && !L1)   Right(2);		//右2   10111
+	// 		if( R1 &&  R2 && !M1 && !L2 && !L1)	  Right(4);		//右3   00111
+	// 		if( R1 && !R2 && !M1 && !L2 && !L1)   Right(6);		//右3   01111
+	// 		if(!R1 && !R2 &&  M1 &&  L2 && !L1)   Left(1);		//左1   11001
+	// 		if(!R1 && !R2 && !M1 &&  L2 && !L1)   Left(2);		//左2   11101
+	// 		if(!R1 && !R2 && !M1 &&  L2 &&  L1)   Left(4);		//左3   11100
+	// 		if(!R1 && !R2 && !M1 && !L2 &&  L1)   Left(6);		//左3   11110
+	// }
 }
 
 /* USER CODE BEGIN 4 */
