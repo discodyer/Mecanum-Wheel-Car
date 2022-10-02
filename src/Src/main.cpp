@@ -163,8 +163,8 @@ void assert_failed(uint8_t *file, uint32_t line)
 
 void Data_Analyzer(uint8_t *buffer, uint16_t size)
 {
-	uint16_t x = 0, y = 0, r = 0;
-	if (size < 3 || size > 17)
+	int16_t x = 0, y = 0, r = 0;
+	if (size < 3)
 	{
 		my_printf("no\n");
 		return;
@@ -185,8 +185,8 @@ void Data_Analyzer(uint8_t *buffer, uint16_t size)
 		my_printf("ok\n");
 		return;
 	}
-	
-	// atoi();
+
+	sscanf((char *)buffer, "(%hd,%hd,%hd)%[\n]", &x, &y, &r);
 
 	my_printf("ok\n");
 
