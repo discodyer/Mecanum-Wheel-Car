@@ -20,7 +20,6 @@
 #define USARTON HAL_GPIO_WritePin(USART_GPIO_Port, USART_Pin, GPIO_PIN_SET)
 #define USARTOFF HAL_GPIO_WritePin(USART_GPIO_Port, USART_Pin, GPIO_PIN_RESET)
 
-extern volatile uint16_t FlagIT;
 
 class car
 {
@@ -35,7 +34,6 @@ private:
 	uint16_t DutyL21; //左前轮后退
 
 	void PWMOUT();
-	void Stop();			//停车
 	void Straight();		//直行
 	void Right(uint16_t i); //向右偏移
 	void Left(uint16_t i);	//向左偏移
@@ -46,6 +44,7 @@ private:
 public:
 	car();
 	void move(uint16_t x, uint16_t y, uint16_t r);
+	void Stop(); //停车
 	~car();
 };
 

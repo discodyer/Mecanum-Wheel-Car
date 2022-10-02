@@ -31,14 +31,49 @@ void car::move(uint16_t x, uint16_t y, uint16_t r)
     w3 = y - x - r; //左后轮
     w4 = y + x + r; //右后轮
 
-    this->DutyR10 = 0; //右前轮前进
-    this->DutyR20 = 0; //右后轮前进
-    this->DutyL10 = 0; //左后轮前进
-    this->DutyL20 = 0; //左前轮前进
-    this->DutyR11 = 0; //右前轮后退
-    this->DutyR21 = 0; //右后轮后退
-    this->DutyL11 = 0; //左后轮后退
-    this->DutyL21 = 0; //左前轮后退
+    if (w1 < 0)
+    {
+        this->DutyR10 = 0; //右前轮前进
+        this->DutyR11 = 0; //右前轮后退
+    }
+    else
+    {
+        this->DutyR10 = 0; //右前轮前进
+        this->DutyR11 = 0; //右前轮后退
+    }
+
+    if (w2 < 0)
+    {
+        this->DutyL20 = 0; //左前轮前进
+        this->DutyL21 = 0; //左前轮后退
+    }
+    else
+    {
+        this->DutyL20 = 0; //左前轮前进
+        this->DutyL21 = 0; //左前轮后退
+    }
+
+    if (w3 < 0)
+    {
+        this->DutyL10 = 0; //左后轮前进
+        this->DutyL11 = 0; //左后轮后退
+    }
+    else
+    {
+        this->DutyL10 = 0; //左后轮前进
+        this->DutyL11 = 0; //左后轮后退
+    }
+
+    if (w4 < 0)
+    {
+        this->DutyR20 = 0; //右后轮前进
+        this->DutyR21 = 0; //右后轮后退
+    }
+    else
+    {
+        this->DutyR20 = 0; //右后轮前进
+        this->DutyR21 = 0; //右后轮后退
+    }
 
     this->PWMOUT();
 }
@@ -66,7 +101,6 @@ void car::Stop()
     this->DutyL11 = 1000;
     this->DutyL21 = 1000;
     this->PWMOUT();
-    FlagIT = 1;
     HAL_TIM_Base_Stop_IT(&htim1);
 }
 
