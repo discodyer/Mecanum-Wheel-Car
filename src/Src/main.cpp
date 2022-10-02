@@ -6,9 +6,13 @@
 #include "dma.h"
 #include "stdio.h"
 #include "string.h"
+#include "stdlib.h"
 
 void SystemClock_Config(void);
+void Data_Analyzer(uint8_t *buffer, uint16_t size);
 // int fputc(int ch, FILE *f);
+
+car c;
 
 /**
  * @brief  The application entry point.
@@ -54,8 +58,6 @@ int main(void)
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
 
 	my_printf("USART READY!\n");
-
-	car c;
 
 	while (1)
 	{
@@ -158,3 +160,35 @@ void assert_failed(uint8_t *file, uint32_t line)
 	/* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+
+void Data_Analyzer(uint8_t *buffer, uint16_t size)
+{
+	uint16_t x = 0, y = 0, r = 0;
+	if (size < 3 || size > 17)
+	{
+		my_printf("no\n");
+		return;
+	}
+	if (buffer[0] != '(')
+	{
+		my_printf("no1\n");
+		return;
+	}
+	if (buffer[size - 1] != '\n' && buffer[size - 2] != ')')
+	{
+		my_printf("no-1\n");
+		return;
+	}
+	if (buffer[size - 1] == '\n' && buffer[size - 2] == ')' && buffer[size - 3] == '(')
+	{
+		c.Stop();
+		my_printf("ok\n");
+		return;
+	}
+	
+	// atoi();
+
+	my_printf("ok\n");
+
+	c.move(x, y, r);
+}

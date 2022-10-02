@@ -47,6 +47,7 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
+void Data_Analyzer(uint8_t *buffer, uint16_t size);
 
 /* USER CODE END EM */
 

@@ -50,6 +50,7 @@ uint8_t WhichBufIsReady = 0;         // 双缓存指示器。
 // 0:u2rxbuf 被DMA占用接收,  u1rxbuf 可以读取.
 uint8_t *p_IsOK = u2rxbuf;        // 指针——指向可以读取的那个缓冲
 uint8_t *p_IsToReceive = u1rxbuf; // 指针——指向被占用的那个缓冲
+// extern Data_Analyzer(uint8_t *buffer, uint16_t size);
 //注意定义的时候要先让这两个指针按照WhichBufIsReady的初始状态先初始化一下。下文详述为什么要这样子。
 
 /* USER CODE END PV */
@@ -317,7 +318,8 @@ void USART1_IRQHandler(void)
     }
     //从下面开始可以处理你接收到的数据啦！举个栗子，把你收到的数据原原本本的还回去
 
-    DMA_USART1_Tx_Data(p_IsOK, data_length); //数据打回去，长度就是数据长度
+    // DMA_USART1_Tx_Data(p_IsOK, data_length); //数据打回去，长度就是数据长度
+    Data_Analyzer(p_IsOK, data_length);
 
     ///不管是复制也好，放进去队列也罢，处理你接收到的数据的代码建议从这里结束
     memset((uint8_t *)p_IsToReceive, 0, MAX_RX_LEN); // 把接收数据的指针指向的缓冲区清空
