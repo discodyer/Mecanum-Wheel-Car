@@ -23,9 +23,14 @@ car::~car()
  * @param y 表示 Y 轴运动的速度，即前后方向，定义向前为正
  * @param r 表示 yaw 轴自转的角速度，定义逆时针为正
  */
-void car::move(uint16_t x, uint16_t y, uint16_t r)
+void car::move(int16_t x, int16_t y, int16_t r)
 {
-    uint16_t w1, w2, w3, w4;
+    if (x == 0 && y == 0 && r == 0)
+    {
+        this->Stop();
+        return;
+    }
+    int16_t w1, w2, w3, w4;
     w1 = y - x + r; //右前轮
     w2 = y + x - r; //左前轮
     w3 = y - x - r; //左后轮
@@ -34,44 +39,44 @@ void car::move(uint16_t x, uint16_t y, uint16_t r)
     if (w1 < 0)
     {
         this->DutyR10 = 0; //右前轮前进
-        this->DutyR11 = 0; //右前轮后退
+        this->DutyR11 = -w1; //右前轮后退
     }
     else
     {
-        this->DutyR10 = 0; //右前轮前进
+        this->DutyR10 = w1; //右前轮前进
         this->DutyR11 = 0; //右前轮后退
     }
 
     if (w2 < 0)
     {
         this->DutyL20 = 0; //左前轮前进
-        this->DutyL21 = 0; //左前轮后退
+        this->DutyL21 = -w2; //左前轮后退
     }
     else
     {
-        this->DutyL20 = 0; //左前轮前进
+        this->DutyL20 = w2; //左前轮前进
         this->DutyL21 = 0; //左前轮后退
     }
 
     if (w3 < 0)
     {
         this->DutyL10 = 0; //左后轮前进
-        this->DutyL11 = 0; //左后轮后退
+        this->DutyL11 = -w3; //左后轮后退
     }
     else
     {
-        this->DutyL10 = 0; //左后轮前进
+        this->DutyL10 = w3; //左后轮前进
         this->DutyL11 = 0; //左后轮后退
     }
 
     if (w4 < 0)
     {
         this->DutyR20 = 0; //右后轮前进
-        this->DutyR21 = 0; //右后轮后退
+        this->DutyR21 = -w4; //右后轮后退
     }
     else
     {
-        this->DutyR20 = 0; //右后轮前进
+        this->DutyR20 = w4; //右后轮前进
         this->DutyR21 = 0; //右后轮后退
     }
 

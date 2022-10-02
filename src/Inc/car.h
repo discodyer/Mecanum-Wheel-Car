@@ -42,7 +42,7 @@ private:
 
 public:
 	car();
-	void move(uint16_t x, uint16_t y, uint16_t r);
+	void move(int16_t x, int16_t y, int16_t r);
 	void Stop(); //停车
 	~car();
 };
